@@ -26,7 +26,7 @@ const upload = multer({storage : storage});
 
 router.post('/register', upload.single("image"), async (req, res) => {
     const { username, email, password } = req.body;
-    const imageName = req.file ? req.file.filename : null;
+   // const imageName = req.file ? req.file.filename : null;
 
     try {
         console.log("Email received from client:", email);
@@ -40,7 +40,7 @@ router.post('/register', upload.single("image"), async (req, res) => {
         const otp = await generateOtp();
 
         user = new User({
-            image: imageName,
+            image: 'cars',
             username,
             email,
             password,
