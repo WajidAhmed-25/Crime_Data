@@ -47,27 +47,51 @@ router.get("/getpostbyid/:id" , async (req , res)=>{
 
 
 // Create a post
-router.post('/add_post', authMiddleware , upload.single("image") , async (req, res) => {
-    const { title, description , category , region } = req.body;
-   // const imageName = req.file.filename ;
+// router.post('/add_post', authMiddleware , upload.single("image") , async (req, res) => {
+//     const { title, description , category , region } = req.body;
+//    // const imageName = req.file.filename ;
+
+//     try {
+//         const newPost = new Post({
+//             image : "wajid",
+//             title,
+//             description,
+//             category,
+//             region,
+//           //  user: req.userId,
+//         });
+
+//         const post = await newPost.save();
+//         res.json(post);
+//     } catch (err) {
+//         console.error("my error" + err.message);
+//         res.status(500).send('Server error');
+//     }
+// });
+
+router.post('/add_post', authMiddleware, async (req, res) => {
+    const { title, description, category, region } = req.body;
+    const fixedImageName = "wajid";  // Fixed image name
 
     try {
         const newPost = new Post({
-            image : "wajid",
+            image: fixedImageName,  // Use the fixed image name
             title,
             description,
             category,
             region,
-          //  user: req.userId,
+            // user: req.userId,
         });
 
         const post = await newPost.save();
         res.json(post);
     } catch (err) {
-        console.error("my error" + err.message);
+        console.error("my error: " + err.message);
         res.status(500).send('Server error');
     }
 });
+
+
 
 // Like a post
 router.put('/like/:id', authMiddleware, async (req, res) => {
