@@ -24,49 +24,12 @@ const storage = multer.diskStorage({
 const upload = multer({storage : storage});
 
 
-// Register route
-// router.post('/register', upload.single("image") ,async (req, res) => {
-//     const { username, email, password } = req.body;
-//     const imageName = req.file.filename;
-
-//     try {
-//         let user = await User.findOne({ email });
-
-//         if (user) {
-//             return res.status(400).json({ msg: 'User already exists' });
-//         }
-
-//         user = new User({ 
-//             image : imageName,
-//             username,
-//             email,
-//             password
-//          });
-//         await user.save();
-
-//         const payload = { user: { id: user.id } };
-
-//         jwt.sign(
-//             payload,
-//             process.env.JWT_SECRET,
-//             { expiresIn: 3600 },
-//             (err, token) => {
-//                 if (err) throw err;
-//                 res.json({ token });
-//             }
-//         );
-//     } catch (err) {
-//         console.error(err.message);
-//         res.status(500).send('Server error');
-//     }
-// });
-
 router.post('/register', upload.single("image"), async (req, res) => {
     const { username, email, password } = req.body;
     const imageName = req.file ? req.file.filename : null;
 
     try {
-        console.log("Email received from client:", email); // Log the email
+        console.log("Email received from client:", email);
 
         let user = await User.findOne({ email });
 
@@ -74,7 +37,7 @@ router.post('/register', upload.single("image"), async (req, res) => {
             return res.status(400).json({ msg: 'User already exists' });
         }
 
-        const otp = await generateOtp(); // Ensure this returns a string, not a Promise
+        const otp = await generateOtp();
 
         user = new User({
             image: imageName,
@@ -87,10 +50,8 @@ router.post('/register', upload.single("image"), async (req, res) => {
 
         await user.save();
 
-        console.log("Sending OTP to:", email); // Log the recipient's email
+        console.log("Sending OTP to:", email);
 
-        // await sendEmail(email, 'Verify Your Email', `Your OTP is ${otp}`);
-        const sendEmail = async () => {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -98,26 +59,81 @@ router.post('/register', upload.single("image"), async (req, res) => {
                 pass: "hxib xovz muvt opzk",
             },
         });
-    
+
         const mailOptions = {
             from: "crimeportal22@gmail.com",
-            to : email,
-            subject : 'Verify Your Email',
-            text : `Your OTP is ${otp}`,
+            to: email,
+            subject: 'Verify Your Email',
+            text: `Your OTP is ${otp}`,
         };
-    
+
         await transporter.sendMail(mailOptions);
-    
 
         res.status(200).json({ msg: 'OTP sent to your email' });
-    }
-    await sendEmail();
     } catch (err) {
         console.error("Error here:", err.message);
         res.status(500).send('Server error');
     }
-
 });
+
+
+// router.post('/register', upload.single("image"), async (req, res) => {
+//     const { username, email, password } = req.body;
+//     const imageName = req.file ? req.file.filename : null;
+
+//     try {
+//         console.log("Email received from client:", email); // Log the email
+
+//         let user = await User.findOne({ email });
+
+//         if (user) {
+//             return res.status(400).json({ msg: 'User already exists' });
+//         }
+
+//         const otp = await generateOtp(); // Ensure this returns a string, not a Promise
+
+//         user = new User({
+//             image: imageName,
+//             username,
+//             email,
+//             password,
+//             otp,
+//             otpExpires: Date.now() + 3600000, // OTP expires in 1 hour
+//         });
+
+//         await user.save();
+
+//         console.log("Sending OTP to:", email); // Log the recipient's email
+
+//         // await sendEmail(email, 'Verify Your Email', `Your OTP is ${otp}`);
+//         const sendEmail = async () => {
+//         const transporter = nodemailer.createTransport({
+//             service: 'gmail',
+//             auth: {
+//                 user: "crimeportal22@gmail.com",
+//                 pass: "hxib xovz muvt opzk",
+//             },
+//         });
+    
+//         const mailOptions = {
+//             from: "crimeportal22@gmail.com",
+//             to : email,
+//             subject : 'Verify Your Email',
+//             text : `Your OTP is ${otp}`,
+//         };
+    
+//         await transporter.sendMail(mailOptions);
+    
+
+//         res.status(200).json({ msg: 'OTP sent to your email' });
+//     }
+//     await sendEmail();
+//     } catch (err) {
+//         console.error("Error here:", err.message);
+//         res.status(500).send('Server error');
+//     }
+
+// });
 
 
 // Verify OTP Route
