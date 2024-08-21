@@ -53,7 +53,7 @@ router.post('/add_post', authMiddleware , upload.single("image") , async (req, r
 
     try {
         const newPost = new Post({
-            image : imageName,
+            image : "car",
             title,
             description,
             category,
