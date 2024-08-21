@@ -49,16 +49,16 @@ router.get("/getpostbyid/:id" , async (req , res)=>{
 // Create a post
 router.post('/add_post', authMiddleware , upload.single("image") , async (req, res) => {
     const { title, description , category , region } = req.body;
-    const imageName = req.file.filename ;
+   // const imageName = req.file.filename ;
 
     try {
         const newPost = new Post({
-            image : "car",
+            image : "wajid",
             title,
             description,
             category,
             region,
-            user: req.userId,
+          //  user: req.userId,
         });
 
         const post = await newPost.save();
